@@ -5,9 +5,8 @@ define({
 	"common_button_save": "Guardar",
 	"common_label_yes": "Si",
 	"common_label_no": "No",
-	"common_serviceName": "CrowdTranslate",
-	"common_brandRegistrationYear": "2016",
-	"common_author": "Marcos Fortún, Ricardo Valles",
+	"common_serviceName": "contamadrid",
+	"common_author": "Luz Frías Díaz",
 
 
 	/*
@@ -38,69 +37,68 @@ define({
 		DESKTOP
 	**********************/
 
-	"desktop_topbar_hello": "Hola,",
-	"desktop_topbarEntry_userProfile": "Mis datos",
-	"desktop_topbarEntry_configuration": "Configuración",
-	"desktop_topbarEntry_logout": "Salir",
+	"desktop_topbarEntry_home": "Ahora",
+	"desktop_topbarEntry_history": "Historial",
+	"desktop_topbarEntry_more": "Más...",
 
-	"desktop_menuEntry_home": "Inicio",
-	"desktop_menuEntry_projectHome": "Proyecto",
-	"desktop_menuEntry_projectConfig": "Configuración",
-	"desktop_menuEntry_projectWidget": "Widget",
-	"desktop_menuEntry_projectExport": "Exportar",
 
-	"desktop_menu_copyright": "Copyright Webase",
-	"desktop_notificationPanel_title": "Notificaciones",
-	"desktop_popupSearch_searchPlaceholder": "Buscar páginas...",
-	"desktop_popupSearch_title": "Buscador",
-	"desktop_popupSearch_noResults": "Ups! No hemos encontrado resultados para tu búsqueda.",
+	/*********************
+		INFO
+	**********************/
+
+	"info_riskLevel1_name": "Preaviso",
+	"info_riskLevel1_description": "Cuando en dos estaciones cualesquiera de una misma zona se superan los 180 microgramos/m3 durante dos horas consecutivas.",
+	"info_riskLevel2_name": "Aviso",
+	"info_riskLevel2_description": "Cuando en dos estaciones cualesquiera de una misma zona se superan los 200 microgramos/m3 durante dos horas consecutivas.",
+	"info_riskLevel3_name": "Alerta",
+	"info_riskLevel3_description": "Cuando en tres estaciones cualesquiera de una misma zona (o dos si se trata de la zona 4 - El Pardo y Casa de Campo) se superan los 400 microgramos/m3 durante tres horas consecutivas.",
+
+	"info_preventiveActions_title": "Actuaciones",
+
+	"info_riskLevel1_action1_condition": "1 día con superación del nivel de preaviso.",
+	"info_riskLevel1_action1_point1": "Medidas de Promoción del Transporte Público.",
+	"info_riskLevel1_action1_point2": "Reducción de la velocidad a 70 km/h en la M‐30 y accesos.",
+
+	"info_riskLevel1_action2_condition": "2 días consecutivos con superación del nivel de preaviso.",
+	"info_riskLevel1_action2_point1": "Medidas de Promoción del Transporte Público.",
+	"info_riskLevel1_action2_point2": "Reducción de la velocidad a 70 km/h en la M‐30 y accesos.",
+	"info_riskLevel1_action2_point3": "Prohibición del estacionamiento de vehículos en las plazas y horario del Servicio de Estacionamiento Regulado (SER) en el interior de la M‐30.",
+
+	"info_riskLevel2_action1_condition": "1 día con superación del nivel de aviso.",
+	"info_riskLevel2_action1_point1": "Medidas de Promoción del Transporte Público.",
+	"info_riskLevel2_action1_point2": "Reducción de la velocidad a 70 km/h en la M‐30 y accesos.",
+	"info_riskLevel2_action1_point3": "Prohibición del estacionamiento de vehículos en las plazas y horario del Servicio de Estacionamiento Regulado (SER) en el interior de la M‐30.",
+
+	"info_riskLevel2_action2_condition": "2 días consecutivos con superación del nivel de aviso.",
+	"info_riskLevel2_action2_point1": "Medidas de Promoción del Transporte Público.",
+	"info_riskLevel2_action2_point2": "Reducción de la velocidad a 70 km/h en la M‐30 y accesos.",
+	"info_riskLevel2_action2_point3": "Prohibición del estacionamiento de vehículos en las plazas y horario del Servicio de Estacionamiento Regulado (SER) en el interior de la M‐30.",
+	"info_riskLevel2_action2_point4": "Restricción de la circulación en el interior de la almendra central (área interior de la M‐30) del 50% de todos los vehículos.",
+	"info_riskLevel2_action2_point5": "Se recomienda la no circulación de taxis libres, excepto Ecotaxis y Eurotaxis, en el interior de la almendra central (área interior de la M‐30), pudiendo estos vehículos estacionar en las plazas azules del SER, además de en sus paradas habituales, a la espera de viajeros.",
+
+	"info_riskLevel2_action3_condition": "3 días consecutivos de nivel de aviso.",
+	"info_riskLevel2_action3_point1": "Medidas de Promoción del Transporte Público.",
+	"info_riskLevel2_action3_point2": "Reducción de la velocidad a 70 km/h en la M‐30 y accesos.",
+	"info_riskLevel2_action3_point3": "Prohibición del estacionamiento de vehículos en las plazas y horario del Servicio de Estacionamiento Regulado (SER) en el interior de la M‐30.",
+	"info_riskLevel2_action3_point4": "Restricción de la circulación en el interior de la almendra central (área interior de la M‐30) del 50% de todos los vehículos.",
+	"info_riskLevel2_action3_point5": "Restricción de la circulación de taxis libres, excepto Ecotaxis y Eurotaxis, en el interior de la almendra central (área interior de la M‐30).",
+	"info_riskLevel2_action3_point6": "Restricción de la circulación por la M‐30 del 50% de todos los vehículos.",
+
+	"info_riskLevel3_action1_condition": "1 día de nivel de alerta.",
+	"info_riskLevel3_action1_point1": "Medidas de Promoción del Transporte Público.",
+	"info_riskLevel3_action1_point2": "Reducción de la velocidad a 70 km/h en la M‐30 y accesos.",
+	"info_riskLevel3_action1_point3": "Prohibición del estacionamiento de vehículos en las plazas y horario del Servicio de Estacionamiento Regulado (SER) en el interior de la M‐30.",
+	"info_riskLevel3_action1_point4": "Restricción de la circulación en el interior de la almendra central (área interior de la M‐30) del 50% de todos los vehículos.",
+	"info_riskLevel3_action1_point5": "Restricción de la circulación de taxis libres, excepto Ecotaxis y Eurotaxis, en el interior de la almendra central (área interior de la M‐30).",
+	"info_riskLevel3_action1_point6": "Restricción de la circulación por la M‐30 del 50% de todos los vehículos.",
 
 
 	/*********************
 		HOME
 	**********************/
 
-	"home_pageTitle": "Mis proyectos",
-	"home_projectTable_name": "Proyecto",
-	"home_projectTable_createdAt": "Creado",
-	"home_projectTable_updatedAt": "Último cambio",
-	"home_projectTable_owner": "Propietario",
+	"home_mapLegend_image": "resources/images/map-legend_es.png",
 
-
-	/*********************
-		PROJECT HOME
-	**********************/
-
-	"projectHome_pageTitle": "Inicio",
-
-
-	/*********************
-		PROJECT CONFIG
-	**********************/
-
-	"projectConfig_pageTitle": "Configuración",
-	"projectConfig_form_name": "Nombre del proyecto",
-	"projectConfig_btnPermissions": "Permisos de acceso",
-	"projectConfig_btnRemove": "Eliminar proyecto",
-
-	/*********************
-		PROJECT LANGUAGE
-	**********************/
-
-
-	/*********************
-		PROJECT WIDGET
-	**********************/
-
-	"projectWidget_pageTitle": "Widget",
-	"projectWidget_text": "Este es el widget de traduccion donde tus usuarios colaborarán con las traducciones. Puedes compartir el enlace al widget o incrustarlo en tu web.",
-
-	/*********************
-		PROJECT EXPORT
-	**********************/
-
-	"projectExport_pageTitle": "Exportar",
-	"projectExport_text": "Muy pronto podrás exportar tus textos a los formatos de internalización más populares.",
 
 	"":""
 });

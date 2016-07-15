@@ -15,7 +15,7 @@ define([
     className: "home-view",
     options: {
       anchor: "#viewport",
-      dateRange: app.config.homeMap_dateRange
+      dateRange: app.config.home_dateRange
     },
 
     template: Handlebars.compile(Template),
@@ -151,23 +151,18 @@ define([
         zoom: 13
       });
 
-      L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-      }).addTo(map);
+      L.tileLayer(app.config.home_tileLayerUrl, app.config.home_tileLayerOptions).addTo(map);
 
-      var data = _(measurements).map(function(m){
-        var station = _(stations).findWhere({ id: m.station });
-        return [ station.latitude, station.longitude, m.value ];
-      });
+      var data = _(measurements).chain()
+        .map(function(m){
+          var station = _(stations).findWhere({ station: m.station });
+          if(station == null){ return null; }
+          return [ station.latitude, station.longitude, m.value ];
+        })
+        .without(null)
+        .value();
 
-      L.idwLayer(data, {
-        opacity: 0.3, cellSize: 5,
-        exp: 1, max: 200,
-        gradient: {
-          0: '#dddddd', 0.3: '#dddddd',
-          0.4: 'green', 0.5: 'yellow', 1: 'red'
-        }
-      }).addTo(map);
+      L.idwLayer(data, app.config.home_idwLayerOptions).addTo(map);
     }
 
   });
