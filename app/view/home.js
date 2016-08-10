@@ -1,31 +1,57 @@
-﻿
-define([
+﻿define([
   'resources/js/text!app/template/homeTpl.html',
+  'resources/js/text!app/template/splashTpl.html',
   'webase/wb-view',
   'webase/wb-utils',
+  'webase/wb-dialog',
   'app/repository/stationRepo',
   'app/repository/pollutionRepo',
   'app/util/common',
-  'leaflet',
-  'leaflet.idw'
-], function(Template, AbstractView, Utils, StationRepo, PollutionRepo, Common) {
+  'app/view/alertActions',
+  'leaflet.idw',
+  'leaflet.awesome-markers',
+  'resources/plugins/seiyria-bootstrap-slider/dist/bootstrap-slider.min'
+], function(Template, SplashTpl, AbstractView, Utils, Dialog, StationRepo, PollutionRepo, Common, AlertActions) {
 
   var View = AbstractView.extend({
 
     className: "home-view",
     options: {
       anchor: "#viewport",
-      dateRange: app.config.home_dateRange
+      dateRange: app.config.home_dateRange,
+      initialDate: '2016-07-15',//Common.serializeDate(new Date()),
+      initialHour: 20,
+      sliderOffset: app.config.home_sliderOffset
     },
 
     template: Handlebars.compile(Template),
+    splashTpl: Handlebars.compile(SplashTpl),
+
+    leaflet: null,
+    tileLayer: null,
+    idwLayer: null,
+    markers: [],
+
+    slider: null,
+    sliderMin: 0,
+    sliderMax: 0,
+    currentDate: null,
+    playInterval: null,
 
     events: {
-      //"click .button.edit": "openEditDialog"
+      "click .btnNext": "onBtnNextClick",
+      "click .btnPrev": "onBtnPrevClick",
+      "click .btnPlay": "onBtnPlayClick",
+      "click .btnPause": "onBtnPauseClick",
+      "click .legend": "onLegendClick",
+      "click .btnShowAlertInfo": "onBtnShowAlertInfoClick",
+      "click .btnShowMarkers": "onBtnShowMarkersClick"
     },
 
     onCreate: function(fn) {
       var me = this;
+
+      me.updateCurrentDate(0);
 
       Async.parallel([
         function(fn){
@@ -36,10 +62,21 @@ define([
         function(fn){
 
           //Obtenemos mediciones
-          var now = (new Date()).getTime(),
-            from = Common.serializeDate(new Date(now - me.options.dateRange)),
-            to = Common.serializeDate(new Date(now + me.options.dateRange));
+          var oneDayInMillis = 24 * 3600 * 1000,
+            minDate = me.currentDate.getTime() - (me.options.dateRange * oneDayInMillis),
+            maxDate = me.currentDate.getTime() + (me.options.dateRange * oneDayInMillis),
+            from = Common.serializeDate(new Date(minDate)),
+            to = Common.serializeDate(new Date(maxDate));
+
           PollutionRepo.getByDateRange(from, to, fn);
+        },
+        function(fn){
+
+          //Tiempo mínimo de respuesta 1s
+          //(duración de la animación de ocultar loading)
+          setTimeout(function(){
+            fn(null, null);
+          }, 1000);
         }
       ], fn);
     },
@@ -47,96 +84,168 @@ define([
     render: function(fn) {
       var me = this;
 
-      Async.parallel({
-        stations: function(fn){
+      //Create HTML from compiled template and put it in $el (DOM element)
+      me.$el.html(me.template({
+        strings: app.strings,
+        config: app.config,
+        options: me.options
+      }));
 
-          //Obtenemos estaciones
-          StationRepo.getAll(fn);
-        },
-        measurements: function(fn){
+      //Reference to view controls
+      me.control = {
+        map: me.$(".map"),
+        slider: me.$(".currentTime"),
+        btnPlay: me.$(".btnPlay"),
+        btnPause: me.$(".btnPause"),
+        btnShowAlertInfo: me.$(".btnShowAlertInfo"),
+        btnShowMarkers: me.$(".btnShowMarkers")
+      };
 
-          //Obtenemos mediciones
-          var now = (new Date()).getTime(),
-            from = Common.serializeDate(new Date(now - me.options.dateRange)),
-            to = Common.serializeDate(new Date(now + me.options.dateRange));
-          PollutionRepo.getByDateRange(from, to, fn);
-        }
-      }, function(err, results){
+      //Slider
+      me.initSlider();
 
-        //Create HTML from compiled template and put it in $el (DOM element)
-        me.$el.html(me.template({
-          strings: app.strings,
-          config: app.config,
-          options: me.options
-        }));
-
-        //Reference to view controls
-        me.control = {
-          map: me.$(".map")
-        };
-
-        //Resize
-        $(window).resize(function() {
-          me.onResize();
+      //Init map
+      var stations = StationRepo.toJSON(),
+        measurements = _(PollutionRepo.toJSON()).where({
+          date: Common.serializeDate(me.currentDate),
+          hour: me.currentDate.getHours()
         });
+      me.initMap(stations, measurements);
 
-        //Init map
-        setTimeout(function() {
-          var now = new Date();
-          //var measurements = _(results.measurements).where({ hour: now.getHours() });
-          var measurements = _(results.measurements).where({ hour: 12 });
-          me.initMap(results.stations, measurements);
-        }, 1000);
-
-        //Initial focus
-        //me.control.input.trigger("focus");
-
-        fn(null, null);
-      });
+      fn(null, null);
     },
 
     afterFirstRender: function(fn) {
       var me = this;
 
-      //me.bindCollection("projects", ProjectRepo);
+      var lastLoad = app.cache.read("lastSplashLoad"),
+        oneDayInMillis = 24 * 3600 * 1000;
+
+      if((Date.now() - lastLoad) < (app.config.splash_loadInterval * oneDayInMillis)){
+        return;
+      }
+      app.cache.write("lastSplashLoad", Date.now());
+
+      var dialog = new Dialog({
+        title: app.strings.splash_popup_title,
+        html: me.splashTpl({ strings: app.strings, config: app.config })
+      });
+      dialog.options.customboxConfig.width = "full";
+      dialog.options.customboxConfig.effect = app.config.splash_popupEffect;
+      dialog.show();
 
       fn(null, null);
-    },
-
-    remove: function() {
-      var me = this;
-
-      //app.globals.desktop.showSideMenu();
-
-      Backbone.View.prototype.remove.apply(me, arguments);
     },
 
     /****************************
     	EVENT HANDLERS
     *****************************/
 
-    onResize: function(e) {
+    onBtnShowMarkersClick: function(e){
       var me = this;
 
-      var w = $(me.options.anchor).innerWidth(),
-        h = $(window).height() / 2;
+      me.control.btnShowMarkers.toggleClass("active");
+      if(me.control.btnShowMarkers.hasClass("active")){
+        me.showMarkers();
+      }else{
+        me.hideMarkers();
+      }
+    },
 
-      me.control.map.css({
-        width: w + " px",
-        height: h + " px"
+    onBtnShowAlertInfoClick: function(e){
+      var me = this;
+
+      //Creamos modal
+      var dialog = new Dialog({
+        title: app.strings.home_popupAlert_title
       });
+      var isMobile = ($(window).width() <= app.config.widthXS);
+      dialog.options.customboxConfig.effect = (isMobile) ? app.config.home_popupEffect_mobile : app.config.home_popupEffect;
+      dialog.options.customboxConfig.width = (isMobile) ? "full" : null;
+
+      //Creamos vista que va dentro del modal
+      dialog.options.view = new AlertActions({
+        riskLevel: me.control.btnShowAlertInfo.data("risk"),
+        action: me.control.btnShowAlertInfo.data("action"),
+        anchor: "#" + dialog.options.name + " .custom-modal-text",
+        autoRender: false
+      });
+
+      //Mostramos modal
+      dialog.show();
     },
 
-    onProjectsUpdate: function(key, list) {
+    onLegendClick: function(e){
       var me = this;
 
-      me.render(Utils.emptyFn);
+      var dialog = new Dialog({
+        title: app.strings.home_popupLegend_title,
+        html: '<img src=' + app.strings.home_mapLegend_image + ' alt="" />'
+      });
+      var isMobile = ($(window).width() <= app.config.widthXS);
+      dialog.options.customboxConfig.effect = (isMobile) ? app.config.home_popupEffect_mobile : app.config.home_popupEffect;
+      dialog.options.customboxConfig.width = (isMobile) ? "full" : null;
+      dialog.show();
     },
 
-    onProjectsReset: function(key, list) {
+    onSliderChange: function(e){
+      var me = e.data;
+
+      var stations = StationRepo.toJSON(),
+        measurements = _(PollutionRepo.toJSON()).where({
+          date: Common.serializeDate(me.currentDate),
+          hour: me.currentDate.getHours()
+        });
+      me.updateMap(stations, measurements);
+    },
+
+    onBtnNextClick: function(e){
       var me = this;
 
-      me.render(Utils.emptyFn);
+      var newValue = me.control.slider.slider('getValue') + 1;
+      me.control.slider.slider('setValue', newValue, true, true);
+    },
+
+    onBtnPrevClick: function(e){
+      var me = this;
+
+      var newValue = me.control.slider.slider('getValue') - 1;
+      me.control.slider.slider('setValue', newValue, true, true);
+    },
+
+    onBtnPlayClick: function(e){
+      var me = this;
+
+      if(me.playInterval != null){
+        return;
+      }
+
+      me.control.slider.slider('disable');
+      me.control.btnPlay.hide();
+      me.control.btnPause.show();
+
+      me.playInterval = setInterval(function(){
+        if(me.control.slider.slider('getValue') == me.sliderMax){
+          me.control.slider.slider('setValue', me.sliderMin, true, true);
+        }else{
+          me.onBtnNextClick();
+        }
+      }, 500);
+    },
+
+    onBtnPauseClick: function(e){
+      var me = this;
+
+      if(me.playInterval == null){
+        return;
+      }
+
+      me.control.slider.slider('enable');
+      me.control.btnPlay.show();
+      me.control.btnPause.hide();
+
+      clearInterval(me.playInterval);
+      me.playInterval = null;
     },
 
     /****************************
@@ -146,12 +255,44 @@ define([
     initMap: function(stations, measurements) {
       var me = this;
 
-      var map = L.map(me.control.map[0], {
-        center: [40.416773, -3.703333],
-        zoom: 13
-      });
+      //Formateado de datos
+      var data = me.prepareDataForLeaflet(stations, measurements);
 
-      L.tileLayer(app.config.home_tileLayerUrl, app.config.home_tileLayerOptions).addTo(map);
+      //Mapa
+      me.leaflet = L.map(me.control.map[0], app.config.home_mapOptions);
+      me.tileLayer = L.tileLayer(app.config.home_tileLayerUrl, app.config.home_tileLayerOptions).addTo(me.leaflet);
+      me.idwLayer = L.idwLayer(data, app.config.home_idwLayerOptions).addTo(me.leaflet);
+      if(app.config.home_labelLayerUrl != null){
+        me.tileLayer = L.tileLayer(app.config.home_labelLayerUrl, app.config.home_labelLayerOptions).addTo(me.leaflet);
+      }
+
+      //Markers
+      _(stations).each(function(station){
+        var marker = L.marker(
+          [station.latitude, station.longitude], {
+            icon: L.AwesomeMarkers.icon(app.config.home_markerIconOptions)
+          }
+        );
+        me.markers.push(marker);
+        marker.bindPopup(
+          app.strings.home_marker_namePre + " " + station.name
+          + '<br />' + app.strings.home_marker_addressPre + " " + station.address
+          + '<br />' + app.strings.home_marker_altitudePre + " " + station.altitude + "m"
+          + '<br />' + app.strings.home_marker_typePre + " " + station.type
+        )
+        .addTo(me.leaflet);
+      });
+    },
+
+    updateMap: function(stations, measurements){
+      var me = this;
+
+      var data = me.prepareDataForLeaflet(stations, measurements);
+      me.idwLayer.setLatLngs(data);
+    },
+
+    prepareDataForLeaflet: function(stations, measurements){
+      var me = this;
 
       var data = _(measurements).chain()
         .map(function(m){
@@ -162,7 +303,71 @@ define([
         .without(null)
         .value();
 
-      L.idwLayer(data, app.config.home_idwLayerOptions).addTo(map);
+      return data;
+    },
+
+    initSlider: function(){
+      var me = this;
+
+      var totalValues = ((me.options.dateRange * 2) + 1) * 24;
+      me.sliderMin = -(totalValues / 2);
+      me.sliderMax = totalValues / 2;
+
+      var options = _.extend({
+        min: me.sliderMin,
+        max: me.sliderMax,
+        value: 0
+      }, app.config.home_sliderOptions);
+
+      options.formatter = function(value) {
+
+        me.updateCurrentDate(value);
+
+        var day = me.currentDate.getDate() + "";
+        day = ((day.length < 2) ? "0" : "") + day;
+        var month = (me.currentDate.getMonth() + 1) + "";
+        month = ((month.length < 2) ? "0" : "") + month;
+        var year = me.currentDate.getFullYear() + "";
+        var strDate = day + "/" + month + "/" + year;
+        var strHour = me.currentDate.getHours() + "";
+        strHour = ((strHour.length < 2) ? "0" : "") + strHour + ":00";
+
+        return strDate + " " + strHour;
+      };
+
+      me.control.slider = me.control.slider.slider(options);
+
+      me.control.slider.on('change', me, me.onSliderChange);
+    },
+
+    updateCurrentDate: function(sliderValue){
+      var me = this;
+
+      var splitted = me.options.initialDate.split("-"),
+        year = splitted[0],
+        month = splitted[1] - 1,
+        day = splitted[2],
+        hour = me.options.initialHour,
+        zero = (new Date(year, month, day, hour, 0, 0)).getTime(),
+        offset = sliderValue * 3600 * 1000;
+
+      me.currentDate = new Date(zero + offset);
+    },
+
+    hideMarkers: function(){
+      var me = this;
+      
+      _(me.markers).each(function(marker){
+        me.leaflet.removeLayer(marker);
+      });
+    },
+
+    showMarkers: function(){
+      var me = this;
+
+      _(me.markers).each(function(marker){
+        marker.addTo(me.leaflet);
+      });
     }
 
   });

@@ -2,15 +2,17 @@
 	Utilidades para popups
 */
 define([
-	'webase/wb-view'
-], function(AbstractView){
+	'webase/wb-view',
+	'webase/wb-utils'
+], function(AbstractView, Utils){
 
 	var Dialog = AbstractView.extend({
 
 		className: "wb-dialog",
 		options: {
 			anchor: "body",
-			view: new Backbone.View(),
+			view: null,
+			html: null,
 			title: "",
 
 			//custombox
@@ -21,52 +23,80 @@ define([
 			}
 		},
 
+		neverShown: true,
+
     template: Handlebars.compile(`
-			<div class="hidden">
-				<button type="button" class="wb-dialog-close close">
+			<div id="{{options.name}}" class="modal-demo" style="display:none">
+				<button type="button" class="close">
 					<span>×</span><span class="sr-only">Close</span>
 				</button>
-				<h4 class="wb-dialog-title">{{title}}</h4>
-				<div class="wb-dialog-body"></div>
+				<h4 class="custom-modal-title">{{options.title}}</h4>
+				<div class="custom-modal-text"></div>
 			</div>
 		`),
 
-		events: {
-	    "click .wb-dialog-close": "close"
-	  },
-
-		onCreate: function(options){
+		onCreate: function(fn){
 			var me = this;
 
-			me.options.customboxConfig.target = me.$el;
+			me.options.customboxConfig.target = "#" + me.options.name;
+			me.options.customboxConfig.close = function(){ me.close(); };
+
+			fn(null, null);
 		},
 
-		render: function(){
+		render: function(fn){
 			var me = this;
 
 			//Create HTML from compiled template and put it in $el (DOM element)
-			me.$el.html(me.template({ title: me.options.title }));
+			me.$el.html(me.template({ options: me.options }));
 
 			me.control = {
-				title: me.$("dialog-title"),
-				body: me.$(".dialog-body"),
-				btnClose: me.$("dialog-close")
+				title: me.$(".custom-modal-title"),
+				body: me.$(".custom-modal-text"),
+				btnClose: me.$(".close")
 			};
 
-			//Render view inside dialog
-			me.control.body.append(me.options.view);
+			//Button close
+			me.control.btnClose.on("click", function(){ me.close(); });
+
+			if(fn != null){
+				fn(null, null);
+			}
 		},
 
 		show: function(){
 			var me = this;
 
-			Custombox.open(me.options.customboxConfig);
+			//Render view inside dialog
+			if(me.neverShown){
+				me.neverShown = false;
+				if(me.options.html != null){
+					me.control.body.append(me.options.html);
+					me.$(".wb-close-dialog").on("click", function(){ me.close(); });
+				}
+			}
+			if(me.options.view != null){
+				me.options.view.render(function(){
+
+					//Show dialog
+					me.$(".wb-close-dialog").on("click", function(){ me.close(); });
+					Custombox.open(me.options.customboxConfig);
+				});
+			}else{
+
+				//Show dialog
+				Custombox.open(me.options.customboxConfig);
+			}
 		},
 
 		close: function(){
 			var me = this;
 
 			Custombox.close();
+			if(me.options.view != null){
+				me.options.view.remove();
+			}
+			me.remove();
 		},
 
 		isOpen: function(){
@@ -74,7 +104,7 @@ define([
 
 			return me.$el.is(":visible");
 		}
-	};
+	});
 
 	return Dialog;
 });

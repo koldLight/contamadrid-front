@@ -15,6 +15,7 @@ define([], function() {
       var me = this;
 
       //TODO: arreglar scraping de mediciones (los ids de estación no coinciden)
+      /*
       var station = "" +
         attributes.station[0] +
         attributes.station[1] +
@@ -25,6 +26,7 @@ define([], function() {
         attributes.station[4] +
         attributes.station[5];
       attributes.station = station;
+      */
 
       //Composited primary key
       attributes.id = attributes.station + "_" + attributes.date + "_" + attributes.hour;

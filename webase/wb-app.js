@@ -10,7 +10,8 @@ require.config({
 		async: 'resources/js/async',
 		bootstrap: 'resources/js/bootstrap',
 		leaflet: 'resources/plugins/leaflet/leaflet',
-		'leaflet.idw': 'resources/plugins/leaflet/leaflet-idw'
+		'leaflet.idw': 'resources/plugins/leaflet/leaflet-idw',
+		'leaflet.awesome-markers': 'resources/plugins/leaflet/leaflet.awesome-markers.min'
 	},
 	shim: {
 		'handlebars': { exports: 'Handlebars' },
@@ -21,7 +22,8 @@ require.config({
     	exports: 'Backbone'
 		},
 		'localStorage': { deps: ['backbone'] },
-		'leaflet.idw': { deps: ['leaflet'] }
+		'leaflet.idw': { deps: ['leaflet'] },
+		'leaflet.awesome-markers': { deps: ['leaflet'] }
 	}
 });
 

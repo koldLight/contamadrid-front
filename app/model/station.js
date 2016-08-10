@@ -8,7 +8,9 @@ define([], function() {
       name: "",
       address: "",
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      altitude: 0,
+      type: ""
     }
   });
 

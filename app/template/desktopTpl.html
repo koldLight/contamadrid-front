@@ -12,9 +12,9 @@
 			<!-- Navigation Menu-->
 			<div id="navigation">
 				<ul class="navigation-menu">
-					<li><a href="#home"><i class="md md-whatshot"></i>Now</a></li>
-					<li><a href="#history"><i class="md md-history"></i>History</a></li>
-					<li><a href="#more"><i class="md md-info-outline"></i>More...</a></li>
+					<li><a href="#home"><i class="md md-whatshot"></i>{{strings.desktop_topbarEntry_home}}</a></li>
+					<li><a href="#history"><i class="md md-history"></i>{{strings.desktop_topbarEntry_history}}</a></li>
+					<li><a href="#more"><i class="md md-info-outline"></i>{{strings.desktop_topbarEntry_more}}</a></li>
 				</ul>
 			</div>
 			<!-- End navigation menu -->
@@ -41,17 +41,17 @@
 		<div id="mainContainer"></div>
 
 		<!-- Footer -->
-		<footer class="footer text-right">
+		<footer class="footer text-right hidden-xs">
 			<div class="container">
 				<div class="row">
 					<div class="col-xs-6">
-						<span class="text-nowrap">© contamadrid {{options.copyYear}}.</span>
-						<span class="text-nowrap">All rights reserved.</span>
+						<span class="text-nowrap">© {{strings.common_serviceName}} {{options.copyYear}}.</span>
+						<span class="text-nowrap">{{strings.common_rights}}</span>
 					</div>
 					<div class="col-xs-6">
 						<ul class="pull-right list-inline m-b-0">
 							<li>
-								<a class="contact" href="javascript:void(0)">Contact</a>
+								<a class="contact" href="javascript:void(0)">{{strings.desktop_footer_contact}}</a>
 							</li>
 						</ul>
 					</div>
