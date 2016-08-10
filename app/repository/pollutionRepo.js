@@ -12,10 +12,10 @@ define([
 		model: Model,
 		clearOnLogout: false,
 
-		getByDateRange: function(from, to, fn){
+		getByDateRange: function(start, end, fn){
 			var me = this;
 
-			me.callService(GetPollutionByDateRange, { from: from, to: to }, fn);
+			me.callService(GetPollutionByDateRange, { start: start, end: end }, fn);
 		}
 
 	});
