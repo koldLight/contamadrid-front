@@ -10,7 +10,7 @@ define([
     defaults: {
 
 			name: "getPollutionByDateRange",
-			params: { from: now, to: now },
+			params: { start: now, end: now },
 			expires: 1 * 3600 * 1000,
       refreshTimestamp: 0
 		},
@@ -21,7 +21,7 @@ define([
 
       var models = me.repository.toJSON();
 			var measurements = _(models).filter(function(m){
-				return (me.get("params").from < m.date && m.date < me.get("params").to);
+				return (me.get("params").start < m.date && m.date < me.get("params").end);
 			});
 
 			fn(null, measurements);
@@ -33,7 +33,7 @@ define([
 
       $.ajax({
         method: "GET",
-        url: app.config.servicePath + ((app.config.enableMockups) ? "resources/mockup/pollution.json" : "measurements"),
+        url: app.config.servicePath + ((app.config.enableMockups) ? "resources/mockup/pollution.json" : "measures"),
 				data: me.get("params"),
         success: function(response, textStatus, jqXHR){
 					if(response.status != 0){
