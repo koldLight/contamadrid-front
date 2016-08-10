@@ -27,8 +27,7 @@ define([
 
       $.ajax({
         method: "GET",
-        url: app.config.servicePath + "/stations",
-				//url: app.config.rootPath + "resources/mockup/stations.json",
+        url: app.config.servicePath + ((app.config.enableMockups) ? "resources/mockup/stations.json" : "/stations"),
         success: function(response, textStatus, jqXHR){
 					if(response.status != 0){
 						console.error("Error while loading stations");

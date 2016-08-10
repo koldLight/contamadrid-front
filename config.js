@@ -16,6 +16,9 @@ define([
 
   var config = {
 
+    //Mockups
+    enableMockups: true,
+
     //router
     defaultView: "home",
 

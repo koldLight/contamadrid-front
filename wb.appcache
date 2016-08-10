@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2016-05-04:v1.0.4 2
+# 2016-05-04:v0.0.1
 
 CACHE:
 
@@ -39,6 +39,24 @@ resources/css/icons.css
 resources/css/pages.css
 resources/css/menu.css
 resources/css/responsive.css
+
+app/model/pollution.js
+app/model/station.js
+
+app/repository/pollutionRepo.js
+app/repository/stationRepo.js
+
+app/service/getAllStations.js
+app/service/getPollutionByDateRange.js
+
+app/template/alertActionsTpl.html
+app/template/homeTpl.html
+app/template/splashTpl.html
+
+app/util/common.js
+
+app/view/home.js
+app/view/alertActions.js
 
 
 FALLBACK:
