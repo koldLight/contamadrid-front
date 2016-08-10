@@ -33,8 +33,7 @@ define([
 
       $.ajax({
         method: "GET",
-        url: app.config.servicePath + "/pollution",
-				//url: app.config.rootPath + "resources/mockup/pollution.json",
+        url: app.config.servicePath + ((app.config.enableMockups) ? "resources/mockup/pollution.json" : "measurements"),
 				data: me.get("params"),
         success: function(response, textStatus, jqXHR){
 					if(response.status != 0){

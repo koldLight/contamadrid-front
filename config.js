@@ -10,11 +10,14 @@ define([
     },
     PRODUCTION: {
       environment: "PRODUCTION",
-      servicePath: "/"
+      servicePath: "api.contamadrid.es/"
     }
   };
 
   var config = {
+
+    //Mockups
+    enableMockups: true,
 
     //router
     defaultView: "home",
