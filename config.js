@@ -10,7 +10,7 @@ define([
     },
     PRODUCTION: {
       environment: "PRODUCTION",
-      servicePath: "api.contamadrid.es/"
+      servicePath: "http://api.contamadrid.es/"
     }
   };
 
