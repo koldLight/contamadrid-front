@@ -20,7 +20,7 @@
       anchor: "#viewport",
       dateRange: app.config.home_dateRange,
       initialDate: '2016-07-15',//Common.serializeDate(new Date()),
-      initialHour: 20,
+      initialHour: 12,
       sliderOffset: app.config.home_sliderOffset
     },
 
@@ -65,10 +65,10 @@
           var oneDayInMillis = 24 * 3600 * 1000,
             minDate = me.currentDate.getTime() - (me.options.dateRange * oneDayInMillis),
             maxDate = me.currentDate.getTime() + (me.options.dateRange * oneDayInMillis),
-            from = Common.serializeDate(new Date(minDate)),
-            to = Common.serializeDate(new Date(maxDate));
+            start = Common.serializeDate(new Date(minDate)),
+            end = Common.serializeDate(new Date(maxDate));
 
-          PollutionRepo.getByDateRange(from, to, fn);
+          PollutionRepo.getByDateRange(start, end, fn);
         },
         function(fn){
 
@@ -230,7 +230,7 @@
         }else{
           me.onBtnNextClick();
         }
-      }, 500);
+      }, 1000);
     },
 
     onBtnPauseClick: function(e){
@@ -289,6 +289,15 @@
 
       var data = me.prepareDataForLeaflet(stations, measurements);
       me.idwLayer.setLatLngs(data);
+
+      /*
+      console.log("------------------------");
+      console.log("stations: " + stations.length);
+      console.log("measures: " + measurements.length);
+      console.log(_(measurements).findWhere({ station_id: 20 }));
+      console.log("date: " + _(measurements).findWhere({ station_id: 20 }).date);
+      console.log("------------------------");
+      */
     },
 
     prepareDataForLeaflet: function(stations, measurements){
@@ -296,7 +305,7 @@
 
       var data = _(measurements).chain()
         .map(function(m){
-          var station = _(stations).findWhere({ station: m.station });
+          var station = _(stations).findWhere({ id: m.station_id });
           if(station == null){ return null; }
           return [ station.latitude, station.longitude, m.value ];
         })
@@ -311,7 +320,7 @@
 
       var totalValues = ((me.options.dateRange * 2) + 1) * 24;
       me.sliderMin = -(totalValues / 2);
-      me.sliderMax = totalValues / 2;
+      me.sliderMax = (totalValues / 2) - 1;
 
       var options = _.extend({
         min: me.sliderMin,
@@ -356,7 +365,7 @@
 
     hideMarkers: function(){
       var me = this;
-      
+
       _(me.markers).each(function(marker){
         me.leaflet.removeLayer(marker);
       });

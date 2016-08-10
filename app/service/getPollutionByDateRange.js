@@ -36,9 +36,9 @@ define([
         url: app.config.servicePath + ((app.config.enableMockups) ? "resources/mockup/pollution.json" : "measures"),
 				data: me.get("params"),
         success: function(response, textStatus, jqXHR){
-					if(response.status != 0){
+					if(response.status != 200){
 						console.error("Error while loading pollution measurements");
-						fn("Error: servicio " + me.get("name") + " (" + response.status + ")");
+						return fn("Error: servicio " + me.get("name") + " (" + response.status + ")");
 					}
           fn(null, response.data);
         },

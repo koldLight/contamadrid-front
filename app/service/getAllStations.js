@@ -29,9 +29,9 @@ define([
         method: "GET",
         url: app.config.servicePath + ((app.config.enableMockups) ? "resources/mockup/stations.json" : "stations"),
         success: function(response, textStatus, jqXHR){
-					if(response.status != 0){
+					if(response.status != 200){
 						console.error("Error while loading stations");
-						fn("Error: service " + me.get("name") + " (" + response.status + ")");
+						return fn("Error: service " + me.get("name") + " (" + response.status + ")");
 					}
           fn(null, response.data);
         },

@@ -6,7 +6,7 @@ define([
   var configByEnv = {
     DEVELOPMENT: {
       environment: "DEVELOPMENT",
-      servicePath: "/"
+      servicePath: "http://192.168.1.18:8080/"
     },
     PRODUCTION: {
       environment: "PRODUCTION",
@@ -26,7 +26,7 @@ define([
     defaultImage: "resources/images/default.jpg",
 
     //SPLASH
-    splash_loadInterval: 0, //dias
+    splash_loadInterval: 1, //dias
 
     //fadein | slide | newspaper | fall
     //sidefall | blur | flip | sign | superscaled
@@ -36,7 +36,7 @@ define([
     splash_popupEffect: "fadein",
 
     //HOME
-    home_dateRange: 3, //dias
+    home_dateRange: 1, //dias
     home_mapOptions: {
       center: [40.4383173, -3.6984889], //lat, lng
       zoom: 12
@@ -47,7 +47,7 @@ define([
     },
     home_labelLayerUrl: 'http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png',
     home_labelLayerOptions: {
-      attribution: '&copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+      attribution: '&copy; <a href="http://cartodb.com/attributions">Carto</a>'
     },
     home_idwLayerOptions: {
       opacity: 0.4, //alpha (0 - 1)
