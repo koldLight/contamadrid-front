@@ -14,12 +14,12 @@ define([
       expires: 10 * 365 * 24 * 60 * 60 * 1000 //10 years
     },
 
-    constructor: function() {
+    constructor: function(attributes, options) {
       var now = (new Date()).getTime();
 
       //timestamp
-      this.createdAt = now;
-      this.updatedAt = now;
+      attributes.createdAt = now;
+      attributes.updatedAt = now;
 
       Backbone.Model.apply(this, arguments);
     }

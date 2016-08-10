@@ -33,8 +33,8 @@ define([
 
       $.ajax({
         method: "GET",
-        //url: app.config.servicePath + "project/" + me.get("params").projectId + "/langs",
-				url: app.config.rootPath + "resources/mockup/pollution.json",
+        url: app.config.servicePath + "/pollution",
+				//url: app.config.rootPath + "resources/mockup/pollution.json",
 				data: me.get("params"),
         success: function(response, textStatus, jqXHR){
 					if(response.status != 0){

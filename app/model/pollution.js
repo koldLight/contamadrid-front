@@ -14,8 +14,22 @@ define([], function() {
     constructor: function(attributes, options) {
       var me = this;
 
+      //TODO: arreglar scraping de mediciones (los ids de estación no coinciden)
+      /*
+      var station = "" +
+        attributes.station[0] +
+        attributes.station[1] +
+        "0" +
+        attributes.station[2] +
+        attributes.station[3] +
+        "0" +
+        attributes.station[4] +
+        attributes.station[5];
+      attributes.station = station;
+      */
+
+      //Composited primary key
       attributes.id = attributes.station + "_" + attributes.date + "_" + attributes.hour;
-      //console.log(arguments);
 
       Backbone.Model.apply(this, arguments);
     }

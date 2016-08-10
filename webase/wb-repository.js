@@ -106,6 +106,7 @@ define([
 			var me = this;
 
 			me.each(function(model){
+				if(model == null){ return; }
 				model.destroy({ silent: true });
 			});
 			me.reset();
